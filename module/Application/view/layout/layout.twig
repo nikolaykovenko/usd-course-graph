@@ -1,0 +1,36 @@
+{{ docType() }}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    {% block title %}
+        {{ headTitle(translate('Usd curse graph')).setSeparator(' - ').setAutoEscape(false)|raw }}
+    {% endblock title %}
+
+    {{ headMeta().appendName('viewport', 'width=device-width, initial-scale=1.0')|raw }}
+    {% block meta %}{% endblock %}
+
+    <!-- Le styles -->
+    {{ headLink({'rel': 'shortcut icon', 'type': 'image/vnd.microsoft.icon', 'href': basePath() ~ '/img/favicon.ico'})
+    .prependStylesheet(basePath('css/style.css'))
+    .prependStylesheet(basePath('css/bootstrap-theme.min.css'))
+    .prependStylesheet(basePath('css/bootstrap.min.css'))|raw }}
+    {% block styles %}{% endblock %}
+
+    <!-- Scripts -->
+    {{ headScript()
+    .prependFile(basePath('js/bootstrap.min.js'))
+    .prependFile(basePath('js/jquery.min.js'))
+    .prependFile(basePath('js/respond.min.js'), 'text/javascript', {'conditional': 'lt IE 9'})
+    .prependFile(basePath('js/html5shiv.min.js'), 'text/javascript', {'conditional': 'lt IE 9'})|raw}}
+    {% block scripts %}{% endblock %}
+
+</head>
+<body>
+<div class="container">
+    {% block container %}
+        {{ content|raw }}
+    {% endblock %}
+</div>
+{{ inlineScript() }}
+</body>
+</html>
