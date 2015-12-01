@@ -60,16 +60,20 @@ return array(
             'Zend\Log\LoggerAbstractServiceFactory',
         ),
         'factories' => array(
-            'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-            'Zend\Navigation\mainmenu' => 'Application\FactoryService\MainMenu',
+            'CourseGetter' => 'Application\FactoryService\CourseGetter',
         ),
         'aliases' => array(
             'EntityManager' => 'Doctrine\ORM\EntityManager',
         ),
+        'invokables' => array(
+            'Application\Course\Gateway\PrivatCashless' => \Application\Course\Gateway\PrivatCashless::class,
+            'Application\Course\Gateway\KursComUaBlackMarket' => \Application\Course\Gateway\KursComUaBlackMarket::class,
+        ),
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => Controller\IndexController::class
+            'Application\Controller\Index' => Controller\IndexController::class,
+            'Application\Controller\Get' => Controller\GetController::class,
         ),
     ),
     'view_manager' => array(
@@ -92,6 +96,15 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
+                'user-reset-password' => array(
+                    'options' => array(
+                        'route'    => 'get-course [<courseType>] [--all]',
+                        'defaults' => array(
+                            'controller' => 'Application\Controller\Get',
+                            'action'     => 'getCourse'
+                        ),
+                    ),
+                ),
             ),
         ),
     ),
