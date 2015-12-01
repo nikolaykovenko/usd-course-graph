@@ -67,7 +67,7 @@ return array(
             'EntityManager' => 'Doctrine\ORM\EntityManager',
         ),
         'invokables' => array(
-            'Application\Course\Gateway\PrivatCashless' => \Application\Course\Gateway\PrivatCashless::class,
+            'Application\Course\Gateway\PrivatCashless' => \Application\Course\Gateway\Interbank::class,
         ),
     ),
     'controllers' => array(

@@ -11,7 +11,7 @@ namespace Application\Course\Gateway;
  * Безналичный курс privat24
  * @package Application\Course\Gateway
  */
-class PrivatCashless extends AbstractGateway
+class Interbank extends AbstractGateway
 {
 
     private $sourceUrl = 'http://charts.finance.ua/ru/currency/data-daily?for=interbank&source=1&indicator=usd';

@@ -23,7 +23,7 @@ class CourseGetter implements FactoryInterface
      * @var array
      */
     private $gateways = [
-        'cashless.privat' => [
+        'interbank.buy' => [
             'gatewayClass' => 'Application\Course\Gateway\PrivatCashless',
             'entityClass' => 'Application\Entity\Currency',
         ],
