@@ -75,6 +75,7 @@ abstract class AbstractGateway
     /**
      * Получает результат с соответствующего ресурса
      * @return array
+     * @throws \Exception в случае ошибки
      */
     abstract protected function handleGet();
 }

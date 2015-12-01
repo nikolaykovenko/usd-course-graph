@@ -61,13 +61,13 @@ return array(
         ),
         'factories' => array(
             'CourseGetter' => 'Application\FactoryService\CourseGetter',
+            'Application\Course\Gateway\KursComUaBlackMarket' => 'Application\FactoryService\Gateway\KursComUaBlackMarket',
         ),
         'aliases' => array(
             'EntityManager' => 'Doctrine\ORM\EntityManager',
         ),
         'invokables' => array(
             'Application\Course\Gateway\PrivatCashless' => \Application\Course\Gateway\PrivatCashless::class,
-            'Application\Course\Gateway\KursComUaBlackMarket' => \Application\Course\Gateway\KursComUaBlackMarket::class,
         ),
     ),
     'controllers' => array(
