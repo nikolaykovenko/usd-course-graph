@@ -13,7 +13,8 @@
     {{ headLink({'rel': 'shortcut icon', 'type': 'image/vnd.microsoft.icon', 'href': basePath() ~ '/img/favicon.ico'})
     .prependStylesheet(basePath('css/style.css'))
     .prependStylesheet(basePath('css/bootstrap-theme.min.css'))
-    .prependStylesheet(basePath('css/bootstrap.min.css'))|raw }}
+    .prependStylesheet(basePath('css/bootstrap.min.css'))
+    .prependStylesheet(basePath('css/vis.min.css'))|raw }}
     {% block styles %}{% endblock %}
 
     <!-- Scripts -->
@@ -21,7 +22,9 @@
     .prependFile(basePath('js/bootstrap.min.js'))
     .prependFile(basePath('js/jquery.min.js'))
     .prependFile(basePath('js/respond.min.js'), 'text/javascript', {'conditional': 'lt IE 9'})
-    .prependFile(basePath('js/html5shiv.min.js'), 'text/javascript', {'conditional': 'lt IE 9'})|raw}}
+    .prependFile(basePath('js/html5shiv.min.js'), 'text/javascript', {'conditional': 'lt IE 9'})
+    .appendFile(basePath('js/graph.js'))
+    .appendFile(basePath('js/vis.min.js'))|raw}}
     {% block scripts %}{% endblock %}
 
 </head>
