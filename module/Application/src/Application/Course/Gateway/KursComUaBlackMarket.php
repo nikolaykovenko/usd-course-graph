@@ -47,6 +47,7 @@ class KursComUaBlackMarket extends AbstractGateway
         $tableTrs = $html->find('tbody > tr');
         $find = false;
         $tr = current($tableTrs);
+        $result = null;
 
         while ($tr && !$find) {
             $a = $tr->find('td > a', 0);
@@ -58,7 +59,7 @@ class KursComUaBlackMarket extends AbstractGateway
             $tr = next($tableTrs);
         }
 
-        if ($find && !empty($result)) {
+        if ($find) {
             return [
                 'value' => $result,
             ];
@@ -67,23 +68,6 @@ class KursComUaBlackMarket extends AbstractGateway
         throw new \Exception('USD not found in server response');
     }
 
-    /**
-     * Возвращает контент страницы по урлу
-     * @param string $url
-     * @return string
-     */
-    private function getContent($url)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
-        curl_setopt($ch, CURLOPT_REFERER, "http://kurs.com.ua/lvov");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($ch); // выполняем запрос curl
-        curl_close($ch);
-
-        return $result;
-    }
 
     /**
      * Возвращает максимальное числовое значение в ячейках строки

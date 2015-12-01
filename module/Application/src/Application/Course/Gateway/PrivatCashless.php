@@ -14,14 +14,42 @@ namespace Application\Course\Gateway;
 class PrivatCashless extends AbstractGateway
 {
 
+    private $sourceUrl = 'http://charts.finance.ua/ru/currency/data-daily?for=interbank&source=1&indicator=usd';
+
     /**
-     * Получает результат с соответствующего ресурса
-     * @return array
+     * @inheritdoc
      */
     protected function handleGet()
     {
+        $dataDailyText = $this->getContent($this->sourceUrl);
+        $dataDaily = @json_decode($dataDailyText);
+
+        if (empty($dataDaily)) {
+            throw new \Exception('Unknown server error');
+        }
+
+        $value = $this->findNewestBuyCourse($dataDaily);
+
         return [
-            'value' => 24,
+            'value' => $value,
         ];
+    }
+
+
+    /**
+     * Находит последний курс покупки в массиве данных
+     * @param array $dataDaily
+     * @return float
+     * @throws \Exception
+     */
+    private function findNewestBuyCourse(array $dataDaily)
+    {
+        $newestCourse = end($dataDaily);
+
+        if (empty($newestCourse[1])) {
+            throw new \Exception('Course not found in server response');
+        }
+
+        return (float) $newestCourse[1];
     }
 }

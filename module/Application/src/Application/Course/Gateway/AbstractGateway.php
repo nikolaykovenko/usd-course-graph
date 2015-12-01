@@ -41,6 +41,23 @@ abstract class AbstractGateway
     }
 
     /**
+     * Возвращает контент страницы по урлу
+     * @param string $url
+     * @return string
+     */
+    protected function getContent($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = curl_exec($ch); // выполняем запрос curl
+        curl_close($ch);
+
+        return $result;
+    }
+
+    /**
      * Проверяет полученные данные на валидность
      * @param array $data
      * @return bool
