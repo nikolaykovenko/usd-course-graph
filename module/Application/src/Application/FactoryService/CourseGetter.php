@@ -26,7 +26,7 @@ class CourseGetter implements FactoryInterface
      */
     private $gateways = [
         Interbank::NAME => [
-            'gatewayClass' => 'Application\Course\Gateway\PrivatCashless',
+            'gatewayClass' => 'Application\Course\Gateway\Interbank',
             'entityClass' => 'Application\Entity\Currency',
         ],
         KursComUaBlackMarket::NAME => [

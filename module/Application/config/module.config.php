@@ -69,7 +69,7 @@ return array(
             'EntityManager' => 'Doctrine\ORM\EntityManager',
         ),
         'invokables' => array(
-            'Application\Course\Gateway\PrivatCashless' => \Application\Course\Gateway\Interbank::class,
+            'Application\Course\Gateway\Interbank' => \Application\Course\Gateway\Interbank::class,
         ),
     ),
     'controllers' => array(
@@ -98,7 +98,7 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
-                'user-reset-password' => array(
+                'user-get-course' => array(
                     'options' => array(
                         'route'    => 'get-course [<courseType>] [--all]',
                         'defaults' => array(
