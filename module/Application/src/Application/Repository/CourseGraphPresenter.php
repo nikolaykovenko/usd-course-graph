@@ -26,6 +26,16 @@ class CourseGraphPresenter
      */
     private $limit;
 
+    /**
+     * @var array|null
+     */
+    private $groupsArray;
+
+    /**
+     * @var string|null
+     */
+    private $itemsJson;
+
 
     /**
      * @param EntityRepository $entityRepository
@@ -43,10 +53,13 @@ class CourseGraphPresenter
      */
     public function getItems()
     {
-        $rawData = $this->getRawData();
-        $formattedData = $this->graphFormat($rawData);
+        if (is_null($this->itemsJson)) {
+            $rawData = $this->getRawData();
+            $formattedData = $this->graphFormat($rawData);
+            $this->itemsJson = json_encode($formattedData);
+        }
 
-        return json_encode($formattedData);
+        return $this->itemsJson;
     }
 
     /**
@@ -55,19 +68,31 @@ class CourseGraphPresenter
      */
     public function getGroups()
     {
-        $rawData = $this->getBaseQuery()
-            ->addGroupBy('currency.type')
-            ->getQuery()
-            ->getResult(AbstractQuery::HYDRATE_OBJECT);
+        return json_encode($this->getGroupsArray());
+    }
 
-        $result = array_map(
-            function(Currency $currency) {
-                return $currency->getType();
-            },
-            $rawData
-        );
+    /**
+     * @return array
+     */
+    private function getGroupsArray()
+    {
+        if (is_null($this->groupsArray)) {
+            $rawData = $this->getBaseQuery()
+                ->addGroupBy('currency.type')
+                ->getQuery()
+                ->getResult(AbstractQuery::HYDRATE_OBJECT);
 
-        return json_encode($result);
+            $result = array_map(
+                function(Currency $currency) {
+                    return $currency->getType();
+                },
+                $rawData
+            );
+
+            $this->groupsArray = $result;
+        }
+
+        return $this->groupsArray;
     }
 
 
@@ -107,7 +132,7 @@ class CourseGraphPresenter
      */
     private function graphFormat(array $rawData)
     {
-        return array_map(
+        $result = array_map(
             function(Currency $currency) {
                 return [
                     'x' => $currency->getTime()->format(\DateTime::ATOM),
@@ -117,5 +142,38 @@ class CourseGraphPresenter
             },
             $rawData
         );
+
+        return $this->addLabelsToLastItems($result);
+    }
+
+    /**
+     * Добавляет подписи последним курсам каждого из типов
+     * @param array $data
+     * @return array
+     */
+    private function addLabelsToLastItems(array $data)
+    {
+//        Меняем местами ключи и значения, чтобы получить удобный доступ к уникальным значениям групп
+        $groups = array_flip($this->getGroupsArray());
+
+        $item = end($data);
+        while (!empty($groups) && $item) {
+            $groupName = $item['group'];
+
+            if (isset($groups[$groupName])) {
+//                Добавляем текущему элементу label
+                $data[key($data)]['label'] = [
+                    'content' => $item['y'],
+                    'xOffset' => -60,
+                    'yOffset' => -10,
+                ];
+
+                unset($groups[$groupName]);
+            }
+
+            $item = prev($data);
+        }
+
+        return $data;
     }
 }
