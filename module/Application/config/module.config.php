@@ -62,6 +62,7 @@ return array(
         'factories' => array(
             'CourseGetter' => 'Application\FactoryService\CourseGetter',
             'CourseGraphPresenter' => 'Application\FactoryService\Repository\CourseGraphPresenter',
+            'DiffCoursesGraphPresenter' => 'Application\FactoryService\Repository\DiffCoursesGraphPresenter',
             'Application\Course\Gateway\KursComUaBlackMarket' => 'Application\FactoryService\Gateway\KursComUaBlackMarket',
         ),
         'aliases' => array(

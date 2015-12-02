@@ -1,6 +1,18 @@
-<h3></h3>
-<div id="visualization"></div>
+<section>
+    <h4>Main data:</h4>
+    <div id="visualization-main"></div>
+</section>
+<section>
+    <h4>Diff data:</h4>
+    <div id="visualization-diff"></div>
+</section>
 <script>
-    var groupsRaw = {{ coursePresenter.getGroups()|json_encode|raw }},
-        items = {{ coursePresenter.getItems()|json_encode|raw }};
+    var groupsRaw = {
+                "main": {{ coursePresenter.getGroups()|json_encode|raw }},
+                "diff": {{ diffCoursesPresenter.getGroups()|json_encode|raw }}
+            },
+        items = {
+            "main": {{ coursePresenter.getItems()|json_encode|raw }},
+            "diff": {{ diffCoursesPresenter.getItems()|json_encode|raw }}
+        };
 </script>

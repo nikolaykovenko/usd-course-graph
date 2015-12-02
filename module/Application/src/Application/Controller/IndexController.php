@@ -18,9 +18,11 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $coursePresenter = $this->getServiceLocator()->get('CourseGraphPresenter');
+        $diffCoursesPresenter = $this->getServiceLocator()->get('DiffCoursesGraphPresenter');
 
         return new ViewModel([
                 'coursePresenter' => $coursePresenter,
+                'diffCoursesPresenter' => $diffCoursesPresenter,
             ]
         );
     }
