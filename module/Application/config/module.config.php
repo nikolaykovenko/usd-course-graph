@@ -29,7 +29,7 @@ return array(
             'application' => array(
                 'type'    => 'Literal',
                 'options' => array(
-                    'route'    => '/application',
+                    'route'    => '/',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Index',
@@ -38,6 +38,16 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
+                    'user-get-course' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => 'get-all-courses-secret-route-777',
+                            'defaults' => array(
+                                'controller' => 'Application\Controller\Get',
+                                'action' => 'getAllCoursesTemp'
+                            ),
+                        ),
+                    ),
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(

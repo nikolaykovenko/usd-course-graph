@@ -10,13 +10,14 @@ namespace Application\Controller;
 use Application\Course\Getter;
 use Application\Entity\Currency;
 use Doctrine\ORM\EntityManager;
+use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Controller\AbstractConsoleController;
 
 /**
  * Контроллер для получения курсов валют
  * @package Application\Controller
  */
-class GetController extends AbstractConsoleController
+class GetController extends AbstractActionController
 {
 
     /**
@@ -47,6 +48,19 @@ class GetController extends AbstractConsoleController
 
         return $this->saveCourses($courses);
 
+    }
+
+    /**
+     * Временный экшин для вызова через http, а не через консоль
+     * @return string
+     */
+    public function getAllCoursesTempAction()
+    {
+        /** @var Getter $courseGetter */
+        $courseGetter = $this->getServiceLocator()->get('CourseGetter');
+        $courses = $courseGetter->getFromAllGateways();
+        echo $this->saveCourses($courses);
+        die();
     }
 
 
