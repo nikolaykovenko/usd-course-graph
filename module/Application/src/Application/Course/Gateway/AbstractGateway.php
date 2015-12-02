@@ -14,6 +14,8 @@ namespace Application\Course\Gateway;
 abstract class AbstractGateway
 {
 
+    CONST NAME = 'abstract';
+
     /**
      * @var array обязательные поля полученные через gateway
      */
@@ -34,7 +36,7 @@ abstract class AbstractGateway
         }
 
         if (empty($result['type'])) {
-            $result['type'] = $this->getShortClassName();
+            $result['type'] = $this->getCurrencyType();
         }
 
         return $result;
@@ -82,11 +84,9 @@ abstract class AbstractGateway
      * Возвращает краткое название класса gateway
      * @return string
      */
-    private function getShortClassName()
+    private function getCurrencyType()
     {
-        $reflection = new \ReflectionClass($this);
-
-        return $reflection->getShortName();
+        return static::NAME;
     }
 
     /**

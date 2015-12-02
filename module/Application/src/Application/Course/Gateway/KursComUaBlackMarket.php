@@ -16,6 +16,8 @@ use Sunra\PhpSimple\HtmlDomParser;
 class KursComUaBlackMarket extends AbstractGateway
 {
 
+    CONST NAME = 'black.kurs.com.ua';
+
     private $sourceUrl = 'http://kurs.com.ua/ajax/comm_widget/1217/now/eur,usd,rub';
 
     /**

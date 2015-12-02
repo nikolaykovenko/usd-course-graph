@@ -7,6 +7,8 @@
 
 namespace Application\FactoryService;
 
+use Application\Course\Gateway\Interbank;
+use Application\Course\Gateway\KursComUaBlackMarket;
 use Application\Course\Getter;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\ServiceManager\FactoryInterface;
@@ -23,11 +25,11 @@ class CourseGetter implements FactoryInterface
      * @var array
      */
     private $gateways = [
-        'interbank.buy' => [
+        Interbank::NAME => [
             'gatewayClass' => 'Application\Course\Gateway\PrivatCashless',
             'entityClass' => 'Application\Entity\Currency',
         ],
-        'black.kurs.com.ua' => [
+        KursComUaBlackMarket::NAME => [
             'gatewayClass' => 'Application\Course\Gateway\KursComUaBlackMarket',
             'entityClass' => 'Application\Entity\Currency',
         ],

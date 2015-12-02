@@ -7,9 +7,15 @@
 
 namespace Application\FactoryService\Repository;
 
+use Application\Course\Gateway\Interbank;
+use Application\Course\Gateway\KursComUaBlackMarket;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Class CourseGraphPresenter
+ * @package Application\FactoryService\Repository
+ */
 class CourseGraphPresenter implements FactoryInterface
 {
 
@@ -20,7 +26,12 @@ class CourseGraphPresenter implements FactoryInterface
     {
         $courseRepository = $serviceLocator->get('EntityManager')->getRepository('Application\Entity\Currency');
 
-        $presenter = new \Application\Repository\CourseGraphPresenter($courseRepository);
+        $presenter = new \Application\Repository\CourseGraphPresenter(
+            $courseRepository,
+            [
+                [KursComUaBlackMarket::NAME, Interbank::NAME],
+            ]
+        );
 
         return $presenter;
     }

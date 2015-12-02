@@ -18,8 +18,15 @@ use Doctrine\ORM\EntityRepository;
 class CourseGraphPresenter
 {
 
-    /** @var EntityRepository */
+    /**
+     * @var EntityRepository
+     */
     private $entityRepository;
+
+    /**
+     * @var array
+     */
+    private $addDiffGraphsCurrencies;
 
     /**
      * @var int
@@ -29,22 +36,25 @@ class CourseGraphPresenter
     /**
      * @var array|null
      */
-    private $groupsArray;
+    private $groups;
 
     /**
-     * @var string|null
+     * @var array|null
      */
-    private $itemsJson;
+    private $items;
 
 
     /**
      * @param EntityRepository $entityRepository
+     * @param array $addDiffGraphsCurrencies если нужно построить дополнительные графики разницы значений - их нужно передать в массиве
      * @param int $limit
      */
-    public function __construct(EntityRepository $entityRepository, $limit = 0)
+    public function __construct(EntityRepository $entityRepository, $addDiffGraphsCurrencies = [], $limit = 0)
     {
         $this->entityRepository = $entityRepository;
+        $this->addDiffGraphsCurrencies = $addDiffGraphsCurrencies;
         $this->limit = $limit;
+
     }
 
     /**
@@ -53,30 +63,27 @@ class CourseGraphPresenter
      */
     public function getItems()
     {
-        if (is_null($this->itemsJson)) {
+        if (is_null($this->items)) {
             $rawData = $this->getRawData();
+
+            if (!empty($this->addDiffGraphsCurrencies)) {
+                $rawData = $this->addDiffGraphs($rawData);
+            }
+
             $formattedData = $this->graphFormat($rawData);
-            $this->itemsJson = json_encode($formattedData);
+            $this->items = $formattedData;
         }
 
-        return $this->itemsJson;
+        return $this->items;
     }
 
     /**
-     * Возвращает группы в json формате необходимом для JS библиотеки
-     * @return string
+     * Возвращает массив групп в формате необходимом для JS библиотеки
+     * @return array
      */
     public function getGroups()
     {
-        return json_encode($this->getGroupsArray());
-    }
-
-    /**
-     * @return array
-     */
-    private function getGroupsArray()
-    {
-        if (is_null($this->groupsArray)) {
+        if (is_null($this->groups)) {
             $rawData = $this->getBaseQuery()
                 ->addGroupBy('currency.type')
                 ->getQuery()
@@ -89,10 +96,14 @@ class CourseGraphPresenter
                 $rawData
             );
 
-            $this->groupsArray = $result;
+            foreach ($this->addDiffGraphsCurrencies as $diffCurrencies) {
+                $result[] = $this->makeDiffCurrencyType($diffCurrencies[0], $diffCurrencies[1]);
+            }
+
+            $this->groups = $result;
         }
 
-        return $this->groupsArray;
+        return $this->groups;
     }
 
 
@@ -147,6 +158,77 @@ class CourseGraphPresenter
     }
 
     /**
+     * Добавляет данные для еще одного графика - разницы значений
+     * @param Currency[] $data
+     * @return array
+     * @throws \Exception в случае ошибки
+     */
+//    TODO: Вынести на отдельный график
+    private function addDiffGraphs(array $data)
+    {
+        $result = $data;
+
+        foreach ($this->addDiffGraphsCurrencies as $currencies) {
+            if (count($currencies) !== 2) {
+                throw new \Exception('You can only build diff graph based on two currencies');
+            }
+
+            list($topCurrencyName, $bottomCurrencyName) = $currencies;
+
+            foreach ($data as $currentCurrency) {
+                if ($currentCurrency->getType() === $topCurrencyName) {
+                    $bottomCurrency = $this->findCurrencyWithTheSameTime($data, $currentCurrency, $bottomCurrencyName);
+
+                    if ($bottomCurrency) {
+                        $diffCurrency = new Currency();
+
+                        $diffCurrency->setTime($currentCurrency->getTime());
+                        $diffCurrency->setType($this->makeDiffCurrencyType($topCurrencyName, $bottomCurrencyName));
+                        $diffCurrency->setValue($currentCurrency->getValue() - $bottomCurrency->getValue());
+
+                        $result[] =$diffCurrency;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    private function makeDiffCurrencyType($topCurrencyName, $bottomCurrencyName)
+    {
+        return 'Difference: ' . $topCurrencyName . ' - ' . $bottomCurrencyName;
+    }
+
+    /**
+     * Находит
+     * @param Currency[] $rawData
+     * @param Currency $diffCurrency
+     * @param string $findCurrencyName
+     * @param int $timeDiffInSeconds
+     * @return Currency|false
+     */
+    private function findCurrencyWithTheSameTime(array $rawData, Currency $diffCurrency, $findCurrencyName, $timeDiffInSeconds = 3)
+    {
+        /** @var Currency $currencyCurrency */
+        $currencyCurrency = reset($rawData);
+
+        while ($currencyCurrency) {
+            if ($currencyCurrency->getType() === $findCurrencyName) {
+                $timeInterval = abs($currencyCurrency->getTime()->getTimestamp() - $diffCurrency->getTime()->getTimestamp());
+
+                if ($timeInterval <= $timeDiffInSeconds) {
+                    return $currencyCurrency;
+                }
+            }
+
+            $currencyCurrency = next($rawData);
+        }
+
+        return false;
+    }
+
+    /**
      * Добавляет подписи последним курсам каждого из типов
      * @param array $data
      * @return array
@@ -154,7 +236,7 @@ class CourseGraphPresenter
     private function addLabelsToLastItems(array $data)
     {
 //        Меняем местами ключи и значения, чтобы получить удобный доступ к уникальным значениям групп
-        $groups = array_flip($this->getGroupsArray());
+        $groups = array_flip($this->getGroups());
 
         $item = end($data);
         while (!empty($groups) && $item) {
