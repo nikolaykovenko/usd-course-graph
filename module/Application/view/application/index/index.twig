@@ -1,18 +1,31 @@
-<section>
-    <h4>Main data:</h4>
-    <div id="visualization-main"></div>
-</section>
-<section>
-    <h4>Diff data:</h4>
-    <div id="visualization-diff"></div>
-</section>
+<div data-role="graph"></div>
 <script>
-    var groupsRaw = {
-                "main": {{ coursePresenter.getGroups()|json_encode|raw }},
-                "diff": {{ diffCoursesPresenter.getGroups()|json_encode|raw }}
+    var options = {
+            container: $('[data-role="graph"]'),
+            groupsOptions: {
+                drawPoints: {
+                    style: 'circle'
+                }
             },
-        items = {
-            "main": {{ coursePresenter.getItems()|json_encode|raw }},
-            "diff": {{ diffCoursesPresenter.getItems()|json_encode|raw }}
-        };
+            graphOptions: {
+                legend: true
+            }
+        },
+        data = [
+            {
+                id: 'main',
+                title: 'Main data:',
+                groups: {{ coursePresenter.getGroups()|json_encode|raw }},
+                data: {{ coursePresenter.getItems()|json_encode|raw }}
+            },
+            {
+                id: 'diff',
+                title: 'Diff data:',
+                groups: {{ diffCoursesPresenter.getGroups()|json_encode|raw }},
+                data: {{ diffCoursesPresenter.getItems()|json_encode|raw }}
+            }
+        ];
+
+    var visualizator = new visualizator(data, options);
+    visualizator.visualize();
 </script>
